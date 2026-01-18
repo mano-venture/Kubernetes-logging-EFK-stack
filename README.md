@@ -101,7 +101,8 @@ echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.co
 sudo apt-get update
 sudo apt-get install helm bash-completion
 
-# Enable Helm auto-completion
+=> Enable Helm auto-completion
+
 echo 'source <(helm completion bash)' >> ~/.bashrc
 echo 'alias h=helm' >> ~/.bashrc
 echo 'complete -F __start_helm h' >> ~/.bashrc
@@ -142,10 +143,10 @@ ebs-csi-controller: Deployment for volume provisioning and lifecycle management.
 
 📦 Deploying the EFK Stack
 
-kubectl create namespace efk-logging --dry-run=client -o yaml | kubectl apply -f -
+* kubectl create namespace efk-logging --dry-run=client -o yaml | kubectl apply -f -
 
-helm repo add elastic https://helm.elastic.co
-helm repo update
+* helm repo add elastic https://helm.elastic.co
+* helm repo update
 
 helm upgrade --install elasticsearch elastic/elasticsearch \
   -n efk-logging \
@@ -160,17 +161,17 @@ helm upgrade --install elasticsearch elastic/elasticsearch \
   --set esJavaOpts="-Xms1g -Xmx1g" \
   --wait
 
-set context - namespace 
+=> set context - namespace 
 
-  kubectl config set-context --current --namespace=efk-logging 
+* kubectl config set-context --current --namespace=efk-logging 
 
 
-  Retrieve Elasticsearch Credentials
+🚀 Retrieve Elasticsearch Credentials
 
-  # Username
-kubectl get secrets --namespace=efk-logging elasticsearch-master-credentials -ojsonpath='{.data.username}' | base64 -d
-# Password
-kubectl get secrets --namespace=efk-logging elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+=>Username
+* kubectl get secrets --namespace=efk-logging elasticsearch-master-credentials -ojsonpath='{.data.username}' | base64 -d
+=> Password
+* kubectl get secrets --namespace=efk-logging elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
 
 🚀 Install Kibana
 
@@ -182,7 +183,7 @@ helm upgrade --install kibana elastic/kibana \
 
  🚀  Install Fluent Bit
  
-  Note: Update the HTTP_Passwd field in 1-fluentbit-values.yml
+* Note: Update the HTTP_Passwd field in 1-fluentbit-values.yml
 
 helm repo add fluent https://fluent.github.io/helm-charts
 helm repo update
@@ -191,23 +192,25 @@ helm install fluent-bit fluent/fluent-bit \
   -n efk-logging
 
   Check services:
-  kubectl get svc -n efk-logging
+  * kubectl get svc -n efk-logging
 
-  Access Kibana at http://<load-balancer-dns>:5601
+  * Access Kibana at http://<load-balancer-dns>:5601
 
-  kubectl describe pod elasticsearch-master-0 | grep -i "controlled by"
+  * kubectl describe pod elasticsearch-master-0 | grep -i "controlled by"
 
   🚀 Deploy a Sample Python App
 
-  kubectl create namespace microservice
-kubectl apply -f 2-app.yml -n microservice
+* kubectl create namespace microservice
+* kubectl apply -f 2-app.yml -n microservice
 
 🧼 Clean Up
-kubectl delete pvc elasticsearch-master-elasticsearch-master-0 -n efk-logging
-helm uninstall fluent-bit -n efk-logging
-helm uninstall elasticsearch -n efk-logging
-helm uninstall kibana -n efk-logging
-eksctl delete cluster -f 0-eks-creation-config.yml
+
+* kubectl delete pvc elasticsearch-master-elasticsearch-master-0 -n efk-logging
+
+* helm uninstall fluent-bit -n efk-logging
+* helm uninstall elasticsearch -n efk-logging
+* helm uninstall kibana -n efk-logging
+* eksctl delete cluster -f 0-eks-creation-config.yml
 
 
 
